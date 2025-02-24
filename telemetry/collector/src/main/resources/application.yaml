@@ -3,11 +3,10 @@ server:
 spring:
   kafka:
     bootstrap-servers: localhost:9092
-    admin:
-      client-id: producer-1
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: ru.yandex.practicum.serialization.AvroSerializer
+    client-id: producer-1
 logging:
   level:
     org:
