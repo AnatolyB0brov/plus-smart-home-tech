@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.config.Config;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,8 +17,13 @@ class SensorsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private Config config;
+
     @Test
     void lightSensorEventTest() throws Exception {
+        String s = config.getSensorEventsTopic();
+        int i = 0;
         mockMvc.perform(
                         post("/sensors")
                                 .content("{" +
