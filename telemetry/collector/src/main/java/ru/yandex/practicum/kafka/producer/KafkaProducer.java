@@ -6,7 +6,6 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.config.Config;
 import ru.yandex.practicum.dto.hubs.DeviceEvent;
@@ -37,6 +36,6 @@ public class KafkaProducer {
 
     private void send(String topic, String key, Long timestamp, SpecificRecordBase specificRecordBase) {
         log.info("Sending event to topic: {}, key: {}, timestamp: {}", topic, key, timestamp);
-        producer.send(topic,1,timestamp,key,specificRecordBase);
+        producer.send(topic,null,timestamp,key,specificRecordBase);
     }
 }
