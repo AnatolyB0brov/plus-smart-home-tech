@@ -19,7 +19,7 @@ public class HubController {
 
     @PostMapping
     public void collectHubEvent(@Valid @RequestBody DeviceEvent deviceEvent) {
-        log.info("MY LOG {}",deviceEvent);
+        log.info("{}",deviceEvent);
         deviceService.processDeviceEvent(deviceEvent);
     }
 }
