@@ -11,11 +11,7 @@ import ru.yandex.practicum.dto.hubs.enums.DeviceActionType;
 @Setter
 @ToString
 public class DeviceAction {
-    @NotBlank
     private String sensorId;
-
-    @NotNull
     private DeviceActionType type;
-
     private Integer value;
 }
