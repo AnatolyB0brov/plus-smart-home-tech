@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,16 @@ public class HubController {
     private final DeviceService deviceService;
 
     @PostMapping
-    public void collectHubEvent(@Valid @RequestBody DeviceEvent deviceEvent) {
-        log.info("{}",deviceEvent);
-        deviceService.processDeviceEvent(deviceEvent);
+    public void collectHubEvent(@Valid @RequestBody String deviceEventString) {
+        log.info("{}",deviceEventString);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            DeviceEvent deviceEvent = objectMapper.convertValue(deviceEventString,DeviceEvent.class);
+            deviceService.processDeviceEvent(deviceEvent);
+        }catch (Exception e){
+            log.error("{}",deviceEventString);
+        }
+
+
     }
 }
