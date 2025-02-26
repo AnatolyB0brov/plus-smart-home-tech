@@ -46,5 +46,22 @@ class SensorsControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void scenarioAddedTest() throws Exception {
+        String json = "{\"hubId\":\"hub-1\",\"timestamp\":\"2025-02-26T17:00:51.585493301Z\"," +
+                "\"name\":\"Автосвет (коридор)\"," +
+                "\"conditions\":[{\"sensorId\":\"c7b8d4a1-8e37-4c1d-9130-5b0150e13954\"," +
+                "\"type\":\"MOTION\",\"operation\":\"EQUALS\",\"value\":1}," +
+                "{\"sensorId\":\"ed9e9587-4148-4fb5-81e0-61d072568628\",\"type\":\"LUMINOSITY\",\"operation\":\"LOWER_THAN\",\"value\":500}]," +
+                "\"actions\":[{\"sensorId\":\"006b61ad-cac8-4adf-9dce-43892b5d060f\",\"type\":\"ACTIVATE\",\"value\":null}]," +
+                "\"type\":\"SCENARIO_ADDED\"}";
+        mockMvc.perform(
+                        post("/events/hubs")
+                                .content(json)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+    }
+
 
 }
