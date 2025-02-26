@@ -10,6 +10,7 @@ import ru.yandex.practicum.dto.hubs.enums.DeviceType;
 @Setter
 @ToString
 public class DeviceAddedEvent extends DeviceEvent {
+    private String id;
     private DeviceType deviceType;
 
     @Override
