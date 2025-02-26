@@ -8,13 +8,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.yandex.practicum.dto.hubs.enums.DeviceEventType;
+import ru.yandex.practicum.dto.sensors.enums.SensorEventType;
 
 import java.time.Instant;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "type"
+        property = "type",
+        defaultImpl = DeviceEventType.class
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DeviceAddedEvent.class, name = "DEVICE_ADDED"),

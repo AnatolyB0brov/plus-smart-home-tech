@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.dto.hubs.DeviceEvent;
 import ru.yandex.practicum.service.DeviceService;
 
+import java.util.Arrays;
+
 @RestController
 @RequestMapping("/events/hubs")
 @AllArgsConstructor
@@ -19,7 +22,17 @@ public class HubController {
     private final DeviceService deviceService;
 
     @PostMapping
-    public void collectHubEvent(@Valid @RequestBody DeviceEvent deviceEvent) {
+    public void collectHubEvent(@RequestBody String deviceEventString) {
+        log.info(deviceEventString);
+        ObjectMapper objectMapper = new ObjectMapper();
+        DeviceEvent deviceEvent  = null;
+        try {
+            deviceEvent = objectMapper.readValue(deviceEventString, DeviceEvent.class);
+        } catch (Exception e) {
+            log.error(Arrays.toString(e.getStackTrace()));
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
         deviceService.processDeviceEvent(deviceEvent);
     }
 }

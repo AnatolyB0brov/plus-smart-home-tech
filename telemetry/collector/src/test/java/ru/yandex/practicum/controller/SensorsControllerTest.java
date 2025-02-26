@@ -32,4 +32,19 @@ class SensorsControllerTest {
                 )
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void deviceAddedTest() throws Exception {
+        String json = "{\"hubId\":\"hub-1\",\"timestamp\":\"2025-02-25T19:45:32.386580494Z\"," +
+                "\"id\":\"c7b8d4a1-8e37-4c1d-9130-5b0150e13954\"," +
+                "\"deviceType\":\"MOTION_SENSOR\",\"type\":\"DEVICE_ADDED\"}";
+        mockMvc.perform(
+                        post("/events/hubs")
+                                .content(json)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+    }
+
+
 }
