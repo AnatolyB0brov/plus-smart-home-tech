@@ -27,8 +27,6 @@ import java.time.Instant;
 @ToString
 public abstract class DeviceEvent {
     @NotBlank
-    private String id;
-    @NotBlank
     private String hubId;
     private Instant timestamp = Instant.now();
     @NotNull
