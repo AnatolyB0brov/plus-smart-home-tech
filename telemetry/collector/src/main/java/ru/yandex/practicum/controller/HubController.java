@@ -2,6 +2,7 @@ package ru.yandex.practicum.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class HubController {
     public void collectHubEvent(@RequestBody String deviceEventString) {
         log.info(deviceEventString);
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         DeviceEvent deviceEvent  = null;
         try {
             deviceEvent = objectMapper.readValue(deviceEventString, DeviceEvent.class);
