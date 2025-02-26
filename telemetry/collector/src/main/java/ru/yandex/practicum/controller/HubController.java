@@ -19,16 +19,8 @@ public class HubController {
     private final DeviceService deviceService;
 
     @PostMapping
-    public void collectHubEvent(@Valid @RequestBody String deviceEventString) {
+    public void collectHubEvent(@Valid @RequestBody DeviceEvent deviceEvent) {
         log.info("{}",deviceEventString);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            DeviceEvent deviceEvent = objectMapper.convertValue(deviceEventString,DeviceEvent.class);
-            deviceService.processDeviceEvent(deviceEvent);
-        }catch (Exception e){
-            log.error("{}",deviceEventString);
-        }
-
-
+        deviceService.processDeviceEvent(deviceEvent);
     }
 }
