@@ -10,6 +10,5 @@ config:
   hubEventsTopic: telemetry.hubs.v1
 grpc:
   server:
-    host: localhost
     port: 59091
 
