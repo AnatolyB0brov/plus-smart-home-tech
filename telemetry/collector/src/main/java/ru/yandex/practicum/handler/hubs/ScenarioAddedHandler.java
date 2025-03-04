@@ -9,6 +9,7 @@ import ru.yandex.practicum.grpc.telemetry.event.ScenarioConditionProto;
 import ru.yandex.practicum.kafka.producer.KafkaProducer;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 @Component
@@ -28,7 +29,7 @@ public class ScenarioAddedHandler implements HubHandler {
 
         HubEventAvro eventAvro = HubEventAvro.newBuilder()
                 .setHubId(eventProto.getHubId())
-                .setTimestamp(eventProto.getTimestamp().getSeconds())
+                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
                 .setPayload(
                         ScenarioAddedEventAvro.newBuilder()
                                 .setName(scenarioAddedEventProto.getName())

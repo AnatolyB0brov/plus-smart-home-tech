@@ -8,6 +8,8 @@ import ru.yandex.practicum.kafka.producer.KafkaProducer;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
+import java.time.Instant;
+
 @Component
 @AllArgsConstructor
 public class ClimateSensorHandler implements SensorHandler {
@@ -25,7 +27,7 @@ public class ClimateSensorHandler implements SensorHandler {
         SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
                 .setId(eventProto.getId())
                 .setHubId(eventProto.getHubId())
-                .setTimestamp(eventProto.getTimestamp().getSeconds())
+                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
                 .setPayload(ClimateSensorAvro.newBuilder()
                         .setHumidity(climateSensorProto.getHumidity())
                         .setCo2Level(climateSensorProto.getCo2Level())

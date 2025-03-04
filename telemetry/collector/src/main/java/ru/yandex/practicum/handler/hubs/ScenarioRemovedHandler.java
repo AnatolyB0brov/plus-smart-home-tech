@@ -8,6 +8,8 @@ import ru.yandex.practicum.kafka.producer.KafkaProducer;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 
+import java.time.Instant;
+
 @Component
 @AllArgsConstructor
 public class ScenarioRemovedHandler implements HubHandler {
@@ -24,7 +26,7 @@ public class ScenarioRemovedHandler implements HubHandler {
 
         HubEventAvro eventAvro = HubEventAvro.newBuilder()
                 .setHubId(eventProto.getHubId())
-                .setTimestamp(eventProto.getTimestamp().getSeconds())
+                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
                 .setPayload(
                         ScenarioRemovedEventAvro.newBuilder()
                                 .setName(scenarioRemovedEventProto.getName())

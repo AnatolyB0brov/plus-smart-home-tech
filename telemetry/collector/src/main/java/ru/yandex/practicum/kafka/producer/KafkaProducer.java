@@ -19,14 +19,14 @@ public class KafkaProducer {
     public void sendSensorEventAvro(SensorEventAvro sensorEventAvro) {
         send(config.getSensorEventsTopic(),
                 sensorEventAvro.getHubId(),
-                sensorEventAvro.getTimestamp(),
+                sensorEventAvro.getTimestamp().getEpochSecond(),
                 sensorEventAvro);
     }
 
     public void sendHubEventAvro(HubEventAvro hubEventAvro) {
         send(config.getHubEventsTopic(),
                 hubEventAvro.getHubId(),
-                hubEventAvro.getTimestamp(),
+                hubEventAvro.getTimestamp().getEpochSecond(),
                 hubEventAvro);
     }
 
