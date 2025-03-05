@@ -1,5 +1,6 @@
 package ru.yandex.practicum.handler.sensors;
 
+
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
 public interface SensorHandler {
