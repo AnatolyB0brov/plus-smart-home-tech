@@ -54,7 +54,9 @@ public class ScenarioAddedHandler implements HubHandler {
     private ScenarioConditionAvro mapScenarioCondition(ScenarioConditionProto scenarioConditionProto) {
         return ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioConditionProto.getSensorId())
-                .setValue(scenarioConditionProto.getBoolValue())
+                .setValue(scenarioConditionProto.getValueCase() == ScenarioConditionProto.ValueCase.BOOL_VALUE
+                        ? scenarioConditionProto.getBoolValue()
+                        : scenarioConditionProto.getIntValue())
                 .setOperation(ConditionOperationAvro.valueOf(scenarioConditionProto.getOperation().name()))
                 .setType(ConditionTypeAvro.valueOf(scenarioConditionProto.getType().name()))
                 .build();
