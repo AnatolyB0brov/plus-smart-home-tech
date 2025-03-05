@@ -3,7 +3,7 @@ package ru.yandex.practicum.handler.sensors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.grpc.telemetry.event.SwitchSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.SwitchSensorEvent;
 import ru.yandex.practicum.kafka.producer.KafkaProducer;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
@@ -22,14 +22,14 @@ public class SwitchSensorHandler implements SensorHandler {
 
     @Override
     public void handle(SensorEventProto eventProto) {
-        SwitchSensorProto switchSensorProto = eventProto.getSwitchSensorEvent();
+        SwitchSensorEvent switchSensorEvent = eventProto.getSwitchSensorEvent();
 
         SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
                 .setId(eventProto.getId())
                 .setHubId(eventProto.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
                 .setPayload(SwitchSensorAvro.newBuilder()
-                        .setState(switchSensorProto.getState())
+                        .setState(switchSensorEvent.getState())
                         .build()
                 )
                 .build();

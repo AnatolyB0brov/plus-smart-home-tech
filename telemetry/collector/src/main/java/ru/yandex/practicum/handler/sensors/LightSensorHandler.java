@@ -2,7 +2,7 @@ package ru.yandex.practicum.handler.sensors;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.grpc.telemetry.event.LightSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.LightSensorEvent;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.producer.KafkaProducer;
 import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
@@ -22,15 +22,15 @@ public class LightSensorHandler implements SensorHandler {
 
     @Override
     public void handle(SensorEventProto eventProto) {
-        LightSensorProto lightSensorProto = eventProto.getLightSensorEvent();
+        LightSensorEvent lightSensorEvent = eventProto.getLightSensorEvent();
 
         SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
                 .setId(eventProto.getId())
                 .setHubId(eventProto.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
                 .setPayload(LightSensorAvro.newBuilder()
-                        .setLinkQuality(lightSensorProto.getLinkQuality())
-                        .setLuminosity(lightSensorProto.getLuminosity())
+                        .setLinkQuality(lightSensorEvent.getLinkQuality())
+                        .setLuminosity(lightSensorEvent.getLuminosity())
                         .build()
                 )
                 .build();
