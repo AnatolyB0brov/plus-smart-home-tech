@@ -1,5 +1,3 @@
-server:
-  port: 8080
 spring:
   kafka:
     bootstrap-servers: localhost:9092
@@ -7,15 +5,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: ru.yandex.practicum.serialization.AvroSerializer
     client-id: producer-1
-logging:
-  level:
-    org:
-      springframework:
-        web:
-          client:
-            org.springframework.web.client.RestTemplate: DEBUG
 config:
   sensorEventsTopic: telemetry.sensors.v1
   hubEventsTopic: telemetry.hubs.v1
-
+grpc:
+  server:
+    port: 59091
 
