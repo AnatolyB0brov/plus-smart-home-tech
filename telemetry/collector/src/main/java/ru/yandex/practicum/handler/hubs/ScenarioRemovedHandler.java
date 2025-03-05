@@ -26,7 +26,8 @@ public class ScenarioRemovedHandler implements HubHandler {
 
         HubEventAvro eventAvro = HubEventAvro.newBuilder()
                 .setHubId(eventProto.getHubId())
-                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
+                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds(),
+                        eventProto.getTimestamp().getNanos()))
                 .setPayload(
                         ScenarioRemovedEventAvro.newBuilder()
                                 .setName(scenarioRemovedEventProto.getName())
