@@ -31,7 +31,8 @@ public class KafkaProducer {
     }
 
     private void send(String topic, String key, Long timestamp, SpecificRecordBase specificRecordBase) {
-        log.info("Sending event to topic: {}, key: {}, timestamp: {}", topic, key, timestamp);
+        log.info("Sending event to topic: {}, key: {}, timestamp: {}, specific {}", topic, key, timestamp,
+                specificRecordBase);
         producer.send(topic, null, timestamp, key, specificRecordBase);
     }
 }
