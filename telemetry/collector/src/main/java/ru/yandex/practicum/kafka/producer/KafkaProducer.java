@@ -3,9 +3,10 @@ package ru.yandex.practicum.kafka.producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.config.Config;
+import ru.yandex.practicum.config.KafkaConfig;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
@@ -13,26 +14,31 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaProducer {
-    private final KafkaTemplate<String, SpecificRecordBase> producer;
-    private final Config config;
+    private final Producer<String, SpecificRecordBase> producer;
+    private final KafkaConfig config;
 
     public void sendSensorEventAvro(SensorEventAvro sensorEventAvro) {
-        send(config.getSensorEventsTopic(),
+        send(config.getKafkaProperties().getSensorEventsTopic(),
                 sensorEventAvro.getHubId(),
                 sensorEventAvro.getTimestamp().getEpochSecond(),
                 sensorEventAvro);
     }
 
     public void sendHubEventAvro(HubEventAvro hubEventAvro) {
-        send(config.getHubEventsTopic(),
+        send(config.getKafkaProperties().getHubEventsTopic(),
                 hubEventAvro.getHubId(),
                 hubEventAvro.getTimestamp().getEpochSecond(),
                 hubEventAvro);
     }
 
     private void send(String topic, String key, Long timestamp, SpecificRecordBase specificRecordBase) {
-        log.info("Sending event to topic: {}, key: {}, timestamp: {}, specific {}", topic, key, timestamp,
+        log.info("Sending specificRecordBase {} to topic {}", specificRecordBase, topic);
+        ProducerRecord<String, SpecificRecordBase> rec = new ProducerRecord<>(
+                topic,
+                null,
+                timestamp,
+                key,
                 specificRecordBase);
-        producer.send(topic, null, timestamp, key, specificRecordBase);
+        producer.send(rec);
     }
 }
