@@ -1,13 +1,11 @@
-spring:
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: ru.yandex.practicum.serialization.AvroSerializer
-    client-id: producer-1
-config:
-  sensorEventsTopic: telemetry.sensors.v1
-  hubEventsTopic: telemetry.hubs.v1
+kafka:
+  config:
+    bootstrap-servers: "localhost:9092"
+    client-id-config: "producer-1"
+    producer-key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+    producer-value-serializer: "ru.yandex.practicum.serialization.AvroSerializer"
+    sensor-events-topic: "telemetry.sensors.v1"
+    hub-events-topic: "telemetry.hubs.v1"
 grpc:
   server:
     port: 59091
