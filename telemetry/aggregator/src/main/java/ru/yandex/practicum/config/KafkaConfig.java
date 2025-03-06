@@ -2,6 +2,7 @@ package ru.yandex.practicum.config;
 
 import lombok.Getter;
 import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
+import java.util.List;
 import java.util.Properties;
 
 @Getter
@@ -42,6 +44,8 @@ public class KafkaConfig {
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, kafkaProperties.getConsumerClientIdConfig());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getConsumerKeyDeserializer());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaProperties.getConsumerValueDeserializer());
-        return new KafkaConsumer<>(props);
+        KafkaConsumer<String, SensorEventAvro> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(List.of(kafkaProperties.getSensorEventsTopic()));
+        return consumer;
     }
 }
