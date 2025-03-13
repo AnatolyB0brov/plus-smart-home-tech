@@ -59,4 +59,11 @@ public class SnapshotHandler {
                 .setData(event.getPayload())
                 .build();
     }
+
+    public void close() {
+        if (producer != null) {
+            producer.close();
+            log.info("Kafka producer closed");
+        }
+    }
 }
