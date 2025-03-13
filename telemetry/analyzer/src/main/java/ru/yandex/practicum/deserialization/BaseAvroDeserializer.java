@@ -7,6 +7,8 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.common.serialization.Deserializer;
+import ru.yandex.practicum.exception.DeserializationException;
+
 
 public abstract class BaseAvroDeserializer<T extends SpecificRecordBase> implements Deserializer<T> {
     private final DatumReader<T> reader;
@@ -20,6 +22,7 @@ public abstract class BaseAvroDeserializer<T extends SpecificRecordBase> impleme
         reader = new SpecificDatumReader<>(schema);
         decoder = decoderFactory;
     }
+
     @Override
     public T deserialize(String topic, byte[] data) {
         try {
@@ -29,7 +32,7 @@ public abstract class BaseAvroDeserializer<T extends SpecificRecordBase> impleme
             }
             return null;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize data");
+            throw new DeserializationException("Failed to deserialize data", e);
         }
     }
 }
