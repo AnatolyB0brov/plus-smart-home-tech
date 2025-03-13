@@ -8,12 +8,12 @@ kafka:
       group-id: snapshot-analyzer-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       client-id: snapshot-consumer-1
-      value-deserializer: ru.yandex.practicum.avro.SensorSnapshotDeserializer
+      value-deserializer: ru.yandex.practicum.deserialization.SensorSnapshotDeserializer
     hub-consumer:
       attempt-timeout: '2000'
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       client-id: hub-consumer-1
-      value-deserializer: ru.yandex.practicum.avro.HubEventDeserializer
+      value-deserializer: ru.yandex.practicum.deserialization.HubEventDeserializer
       group-id: hub-analyzer-group
 spring:
   datasource:
