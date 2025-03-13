@@ -17,9 +17,9 @@ public class CustomKafkaProducer {
     private final KafkaConfig config;
 
     public void sendSensorsSnapshotAvro(SensorsSnapshotAvro sensorsSnapshotAvro) {
-        send(config.getKafkaProperties().getSensorEventsTopic(),
+        send(config.getKafkaProperties().getSensorSnapshotsTopic(),
                 sensorsSnapshotAvro.getHubId(),
-                sensorsSnapshotAvro.getTimestamp().getEpochSecond(),
+                sensorsSnapshotAvro.getTimestamp().toEpochMilli(),
                 sensorsSnapshotAvro);
     }
 
