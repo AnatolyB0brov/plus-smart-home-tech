@@ -1,58 +1,62 @@
 package ru.yandex.practicum.handler;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.producer.CustomKafkaProducer;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Component
+@AllArgsConstructor
 @Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SnapshotHandler {
-    final Map<String, SensorsSnapshotAvro> snapshots;
-    final Map<Class<? extends SpecificRecord>, SensorHandler<? extends SpecificRecord>> handlers;
+    private final Map<String, SensorsSnapshotAvro> snapshots = new HashMap<>();
+    private final CustomKafkaProducer producer;
 
-    public SnapshotHandler(List<SensorHandler<? extends SpecificRecord>> handlers) {
-        snapshots = new HashMap<>();
-        this.handlers = new HashMap<>();
-        for (SensorHandler<? extends SpecificRecord> handler: handlers) {
-            this.handlers.put(handler.getMessageType(), handler);
-        }
+    public void handleConsumerRecord(ConsumerRecord<String, SensorEventAvro> consumerRecord) {
+        Optional<SensorsSnapshotAvro> snapshotAvro = updateState(consumerRecord.value());
+        snapshotAvro.ifPresent(producer::sendSensorsSnapshotAvro);
     }
 
-    public Optional<SensorsSnapshotAvro> handleKafkaMessage(SensorEventAvro eventAvro) {
-        String hubId = eventAvro.getHubId();
-        log.info("Начата агрегация данных хаба " + hubId);
+    public Optional<SensorsSnapshotAvro> updateState(SensorEventAvro event) {
+        SensorsSnapshotAvro snapshotAvro = snapshots.computeIfAbsent(
+                event.getHubId(),
+                this::getNewSensorsSnapshotAvro
+        );
 
-        SensorsSnapshotAvro snapshot;
-        if (snapshots.containsKey(hubId)) {
-            snapshot = snapshots.get(hubId);
-        } else {
-            snapshot = SensorsSnapshotAvro.newBuilder()
-                    .setHubId(hubId)
-                    .setTimestamp(Instant.now())
-                    .setSensorsState(new HashMap<>())
-                    .build();
-        }
-
-        if (!handlers.containsKey(eventAvro.getPayload().getClass())) {
+        SensorStateAvro oldState = snapshotAvro.getSensorsState().get(event.getId());
+        if (oldState != null && (oldState.getTimestamp().isAfter(event.getTimestamp())
+                || oldState.getData().equals(event.getPayload()))) {
             return Optional.empty();
-        } else {
-            Optional<SensorsSnapshotAvro> result = handlers.get(eventAvro.getPayload().getClass())
-                    .handle(eventAvro, snapshot);
-
-            result.ifPresent(sensorsSnapshotAvro -> snapshots.put(hubId, sensorsSnapshotAvro));
-
-            return result;
         }
+
+        SensorStateAvro newState = getNewSensorsSnapshotAvro(event);
+        snapshotAvro.getSensorsState().put(event.getId(), newState);
+        snapshotAvro.setTimestamp(event.getTimestamp());
+        snapshots.put(event.getHubId(), snapshotAvro);
+        return Optional.of(snapshotAvro);
+    }
+
+    private SensorsSnapshotAvro getNewSensorsSnapshotAvro(String key) {
+        return SensorsSnapshotAvro.newBuilder()
+                .setHubId(key)
+                .setTimestamp(Instant.now())
+                .setSensorsState(new HashMap<>())
+                .build();
+    }
+
+    private SensorStateAvro getNewSensorsSnapshotAvro(SensorEventAvro event) {
+        return SensorStateAvro.newBuilder()
+                .setTimestamp(event.getTimestamp())
+                .setData(event.getPayload())
+                .build();
     }
 }

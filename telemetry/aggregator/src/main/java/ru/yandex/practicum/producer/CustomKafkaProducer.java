@@ -12,7 +12,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaProducer {
+public class CustomKafkaProducer {
     private final Producer<String, SpecificRecordBase> producer;
     private final KafkaConfig config;
 
