@@ -1,7 +1,5 @@
 package ru.yandex.practicum.deserialization;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.apache.avro.Schema;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DatumReader;
@@ -10,10 +8,9 @@ import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.common.serialization.Deserializer;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BaseAvroDeserializer<T extends SpecificRecordBase> implements Deserializer<T> {
-    final DatumReader<T> reader;
-    final DecoderFactory decoder;
+    private final DatumReader<T> reader;
+    private final DecoderFactory decoder;
 
     public BaseAvroDeserializer(Schema schema) {
         this(DecoderFactory.get(), schema);

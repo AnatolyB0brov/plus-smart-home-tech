@@ -1,7 +1,6 @@
 package ru.yandex.practicum.handler;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-@Slf4j
 public class SnapshotHandler {
     private final Map<String, SensorsSnapshotAvro> snapshots = new HashMap<>();
     private final CustomKafkaProducer producer;
@@ -60,10 +58,9 @@ public class SnapshotHandler {
                 .build();
     }
 
-    public void close() {
+    public void closeProducer() {
         if (producer != null) {
             producer.close();
-            log.info("Kafka producer closed");
         }
     }
 }

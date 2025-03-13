@@ -52,7 +52,7 @@ public class CustomKafkaConsumer {
                 consumer.commitSync(currentOffsets);
             } finally {
                 consumer.close();
-                snapshotHandler.close();
+                snapshotHandler.closeProducer();
             }
         }
     }
