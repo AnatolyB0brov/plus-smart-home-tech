@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.config.KafkaConsumerConfig;
 import ru.yandex.practicum.service.HubEventService;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.yandex.practicum.utils.CustomUtils;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class HubConsumer implements Runnable {
                 int count = 0;
                 for (ConsumerRecord<String, HubEventAvro> record : records) {
                     handleRecord(record);
-                    manageOffsets(record, count, consumer);
+                    CustomUtils.manageOffsets(record, count, consumer, currentOffsets);
                     count++;
                 }
                 consumer.commitAsync();
@@ -61,25 +62,8 @@ public class HubConsumer implements Runnable {
         }
     }
 
-    private void handleRecord(ConsumerRecord<String, HubEventAvro> consumerRecord) throws InterruptedException {
+    private void handleRecord(ConsumerRecord<String, HubEventAvro> consumerRecord) {
         log.info("handleRecord {}", consumerRecord);
         service.process(consumerRecord.value());
-    }
-
-    private void manageOffsets(ConsumerRecord<String, HubEventAvro> consumerRecord,
-                               int count,
-                               Consumer<String, HubEventAvro> consumer) {
-        currentOffsets.put(
-                new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
-                new OffsetAndMetadata(consumerRecord.offset() + 1)
-        );
-
-        if(count % 10 == 0) {
-            consumer.commitAsync(currentOffsets, (offsets, exception) -> {
-                if(exception != null) {
-                    log.warn("Ошибка во время фиксации оффсетов: {}", offsets, exception);
-                }
-            });
-        }
     }
 }

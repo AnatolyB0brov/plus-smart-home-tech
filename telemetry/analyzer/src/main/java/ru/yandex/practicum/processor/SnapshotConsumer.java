@@ -14,6 +14,7 @@ import ru.yandex.practicum.model.Scenario;
 import ru.yandex.practicum.service.AnalyzerService;
 import ru.yandex.practicum.service.HubEventService;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.utils.CustomUtils;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class SnapshotConsumer implements Runnable {
                 int count = 0;
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : records) {
                     handleRecord(record);
-                    manageOffsets(record, count, consumer);
+                    CustomUtils.manageOffsets(record, count, consumer, currentOffsets);
                     count++;
                 }
                 consumer.commitAsync();
@@ -65,29 +66,12 @@ public class SnapshotConsumer implements Runnable {
         }
     }
 
-    private void handleRecord(ConsumerRecord<String, SensorsSnapshotAvro> consumerRecord) throws InterruptedException {
+    private void handleRecord(ConsumerRecord<String, SensorsSnapshotAvro> consumerRecord) {
         log.info("analyzer handleRecord {}", consumerRecord.value());
         List<Scenario> scenarios = analyzerService.getScenariosBySnapshot(consumerRecord.value());
         log.info("==> found scenarios for execute {}", scenarios.size());
         for (Scenario scenario : scenarios) {
             hubEventService.sendActionsByScenario(scenario);
-        }
-    }
-
-    private void manageOffsets(ConsumerRecord<String, SensorsSnapshotAvro> consumerRecord,
-                               int count,
-                               Consumer<String, SensorsSnapshotAvro> consumer) {
-        currentOffsets.put(
-                new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
-                new OffsetAndMetadata(consumerRecord.offset() + 1)
-        );
-
-        if (count % 10 == 0) {
-            consumer.commitAsync(currentOffsets, (offsets, exception) -> {
-                if (exception != null) {
-                    log.warn("Ошибка во время фиксации оффсетов: {}", offsets, exception);
-                }
-            });
         }
     }
 }
