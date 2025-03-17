@@ -36,6 +36,10 @@ public class CustomKafkaConsumer {
                 ConsumerRecords<String, SensorEventAvro> records = consumer
                         .poll(Duration.ofMillis(config.getKafkaProperties().getConsumeAttemptTimeout()));
                 int count = 0;
+                records.forEach(record -> {
+                    snapshotHandler.handleConsumerRecord(record);
+                    manageOffsets(record, count, consumer);
+                });
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
                     snapshotHandler.handleConsumerRecord(record);
                     manageOffsets(record, count, consumer);
@@ -43,8 +47,8 @@ public class CustomKafkaConsumer {
                 consumer.commitAsync();
             }
 
-        } catch (WakeupException ignored) {
-
+        } catch (WakeupException e) {
+            log.error("WakeupException {}", e.getMessage());
         } catch (Exception e) {
             log.error("Ошибка во время обработки событий от датчиков {}", e.getMessage());
         } finally {

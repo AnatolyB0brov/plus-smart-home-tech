@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @GrpcService
 public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
-    final Map<SensorEventProto.PayloadCase, SensorHandler> sensorEventHandlers;
-    final Map<HubEventProto.PayloadCase, HubHandler> hubEventHandlers;
+    private final Map<SensorEventProto.PayloadCase, SensorHandler> sensorEventHandlers;
+    private final Map<HubEventProto.PayloadCase, HubHandler> hubEventHandlers;
 
     public EventController(Set<SensorHandler> sensorHandlers, Set<HubHandler> hubHandlers) {
         sensorEventHandlers = sensorHandlers.stream()
@@ -40,12 +40,10 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
         log.info("HubEventProto request {}", request);
         try {
-            if (hubEventHandlers.containsKey(request.getPayloadCase())) {
-                hubEventHandlers.get(request.getPayloadCase()).handle(request);
-            } else {
+            if (!hubEventHandlers.containsKey(request.getPayloadCase())) {
                 throw new IllegalArgumentException("Hub event handler not found" + request.getPayloadCase());
             }
-
+            hubEventHandlers.get(request.getPayloadCase()).handle(request);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
@@ -60,12 +58,10 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     @Override
     public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
         try {
-            if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
-                sensorEventHandlers.get(request.getPayloadCase()).handle(request);
-            } else {
+            if (!sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 throw new IllegalArgumentException("Sensor event handler not found " + request.getPayloadCase());
             }
-
+            sensorEventHandlers.get(request.getPayloadCase()).handle(request);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {

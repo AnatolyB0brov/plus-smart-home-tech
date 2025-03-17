@@ -50,12 +50,11 @@ public class SnapshotConsumer implements Runnable {
                 consumer.commitAsync();
             }
 
-        } catch (WakeupException ignores) {
-
+        } catch (WakeupException e) {
+            log.error("WakeupException ", e);
         } catch (Exception e) {
             log.error("Ошибка во время обработки снимка состояния ", e);
         } finally {
-
             try {
                 consumer.commitSync(currentOffsets);
 
@@ -70,8 +69,6 @@ public class SnapshotConsumer implements Runnable {
         log.info("analyzer handleRecord {}", consumerRecord.value());
         List<Scenario> scenarios = analyzerService.getScenariosBySnapshot(consumerRecord.value());
         log.info("==> found scenarios for execute {}", scenarios.size());
-        for (Scenario scenario : scenarios) {
-            hubEventService.sendActionsByScenario(scenario);
-        }
+        scenarios.forEach(hubEventService::sendActionsByScenario);
     }
 }

@@ -46,8 +46,8 @@ public class HubConsumer implements Runnable {
                 consumer.commitAsync();
             }
 
-        } catch (WakeupException ignores) {
-
+        } catch (WakeupException e) {
+            log.error("WakeupException ", e);
         } catch (Exception e) {
             log.error("Ошибка во время обработки события хаба ", e);
         } finally {
