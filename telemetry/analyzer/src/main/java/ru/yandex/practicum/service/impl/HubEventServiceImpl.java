@@ -42,12 +42,11 @@ public class HubEventServiceImpl implements HubEventService {
     public void process(HubEventAvro hubEvent) {
         log.info("Начало обработки события: {}", hubEvent);
         String eventType = hubEvent.getPayload().getClass().getName();
-        if (hubEventHandlers.containsKey(eventType)) {
-            log.info("Обработка события с помощью обработчика: {}", hubEventHandlers.get(eventType));
-            hubEventHandlers.get(eventType).handle(hubEvent);
-        } else {
+        if (!hubEventHandlers.containsKey(eventType)) {
             throw new IllegalArgumentException("Не удалось найти обработчик для события типа: " + eventType);
         }
+        log.info("Обработка события с помощью обработчика: {}", hubEventHandlers.get(eventType));
+        hubEventHandlers.get(eventType).handle(hubEvent);
     }
 
     @Override
@@ -64,7 +63,7 @@ public class HubEventServiceImpl implements HubEventService {
                     .setSensorId(action.getSensor().getId())
                     .setType(ActionTypeProto.valueOf(action.getType().name()));
 
-            if (action.getType().equals(ActionType.SET_VALUE)){
+            if (action.getType().equals(ActionType.SET_VALUE)) {
                 builder.setValue(action.getValue());
             }
             DeviceActionProto deviceAction = builder.build();

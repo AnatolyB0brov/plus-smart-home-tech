@@ -1,20 +1,22 @@
 package ru.yandex.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;
 
+@UtilityClass
 public class ModelMapper {
 
-    public static Sensor mapToSensor(HubEventAvro hubEventAvro, DeviceAddedEventAvro deviceAddedEventAvro) {
+    public Sensor mapToSensor(HubEventAvro hubEventAvro, DeviceAddedEventAvro deviceAddedEventAvro) {
         return new Sensor(
                 deviceAddedEventAvro.getId(),
                 hubEventAvro.getHubId()
         );
     }
 
-    public static Scenario mapToScenario(HubEventAvro hubEventAvro, ScenarioAddedEventAvro scenarioAddedEventAvro) {
+    public Scenario mapToScenario(HubEventAvro hubEventAvro, ScenarioAddedEventAvro scenarioAddedEventAvro) {
         Scenario scenario = new Scenario();
         scenario.setHubId(hubEventAvro.getHubId());
         scenario.setName(scenarioAddedEventAvro.getName());
@@ -28,7 +30,7 @@ public class ModelMapper {
         return scenario;
     }
 
-    public static Condition mapToCondition(Scenario scenario, ScenarioConditionAvro conditionAvro) {
+    public Condition mapToCondition(Scenario scenario, ScenarioConditionAvro conditionAvro) {
         return Condition.builder()
                 .sensor(new Sensor(conditionAvro.getSensorId(), scenario.getHubId()))
                 .type(toConditionType(conditionAvro.getType()))
@@ -38,7 +40,7 @@ public class ModelMapper {
                 .build();
     }
 
-    public static Action mapToAction(Scenario scenario, DeviceActionAvro deviceActionAvro) {
+    public Action mapToAction(Scenario scenario, DeviceActionAvro deviceActionAvro) {
         return Action.builder()
                 .sensor(new Sensor(deviceActionAvro.getSensorId(), scenario.getHubId()))
                 .type(toActionType(deviceActionAvro.getType()))
@@ -46,19 +48,19 @@ public class ModelMapper {
                 .build();
     }
 
-    public static ConditionType toConditionType(ConditionTypeAvro conditionTypeAvro) {
+    public ConditionType toConditionType(ConditionTypeAvro conditionTypeAvro) {
         return ConditionType.valueOf(conditionTypeAvro.name());
     }
 
-    public static ConditionOperation toConditionOperation(ConditionOperationAvro conditionOperationAvro) {
+    public ConditionOperation toConditionOperation(ConditionOperationAvro conditionOperationAvro) {
         return ConditionOperation.valueOf(conditionOperationAvro.name());
     }
 
-    public static ActionType toActionType(ActionTypeAvro actionTypeAvro) {
+    public ActionType toActionType(ActionTypeAvro actionTypeAvro) {
         return ActionType.valueOf(actionTypeAvro.name());
     }
 
-    public static Integer getConditionValue(Object conditionValue) {
+    public Integer getConditionValue(Object conditionValue) {
         if (conditionValue == null) {
             return null;
         }
