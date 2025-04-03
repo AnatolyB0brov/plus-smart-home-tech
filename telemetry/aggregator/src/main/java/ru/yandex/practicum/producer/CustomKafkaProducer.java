@@ -1,4 +1,4 @@
-package ru.yandex.practicum.kafka.producer;
+package ru.yandex.practicum.producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,28 +7,20 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.config.KafkaConfig;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaProducer {
+public class CustomKafkaProducer {
     private final Producer<String, SpecificRecordBase> producer;
     private final KafkaConfig config;
 
-    public void sendSensorEventAvro(SensorEventAvro sensorEventAvro) {
-        send(config.getKafkaProperties().getSensorEventsTopic(),
-                sensorEventAvro.getHubId(),
-                sensorEventAvro.getTimestamp().getEpochSecond(),
-                sensorEventAvro);
-    }
-
-    public void sendHubEventAvro(HubEventAvro hubEventAvro) {
-        send(config.getKafkaProperties().getHubEventsTopic(),
-                hubEventAvro.getHubId(),
-                hubEventAvro.getTimestamp().getEpochSecond(),
-                hubEventAvro);
+    public void sendSensorsSnapshotAvro(SensorsSnapshotAvro sensorsSnapshotAvro) {
+        send(config.getKafkaProperties().getSensorSnapshotsTopic(),
+                sensorsSnapshotAvro.getHubId(),
+                sensorsSnapshotAvro.getTimestamp().toEpochMilli(),
+                sensorsSnapshotAvro);
     }
 
     private void send(String topic, String key, Long timestamp, SpecificRecordBase specificRecordBase) {
@@ -40,5 +32,13 @@ public class KafkaProducer {
                 key,
                 specificRecordBase);
         producer.send(rec);
+    }
+
+    public void flush() {
+        producer.flush();
+    }
+
+    public void close() {
+        producer.close();
     }
 }
