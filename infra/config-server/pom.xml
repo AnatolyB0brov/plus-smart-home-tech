@@ -9,7 +9,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>ru.yandex.practicum</groupId>
     <artifactId>config-server</artifactId>
 
     <properties>
