@@ -20,8 +20,10 @@ import ru.yandex.practicum.warehouse.dto.AssemblyProductForOrderFromShoppingCart
 import ru.yandex.practicum.warehouse.dto.NewProductInWarehouseRequestDto;
 import ru.yandex.practicum.warehouse.exceptions.ProductWithLowQuantity;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -32,6 +34,23 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseMapper warehouseMapper;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private static final AddressDto[] ADDRESSES =
+            new AddressDto[]{
+                    AddressDto.builder()
+                            .country("Russia")
+                            .city("Moscow")
+                            .street("Liteinaya")
+                            .house("3")
+                            .flat("1")
+                            .build(),
+                    AddressDto.builder()
+                            .country("Russia")
+                            .city("Moscow")
+                            .street("Leningradskiy pr")
+                            .house("5")
+                            .flat("2")
+                            .build()};
+
 
     @Override
     public void newProductToWarehouse(NewProductInWarehouseRequestDto requestDto) {
@@ -49,16 +68,10 @@ public class WarehouseServiceImpl implements WarehouseService {
         );
         warehouse.setQuantity(warehouse.getQuantity() + requestDto.getQuantity());
     }
-
+    //Так хотели по ТЗ
     @Override
     public AddressDto getAddress() {
-        return AddressDto.builder()
-                .country("Russia")
-                .city("Moscow")
-                .street("Some street")
-                .house("7")
-                .flat("4")
-                .build();
+        return ADDRESSES[Random.from(new SecureRandom()).nextInt(0, 1)];
     }
 
     @Override

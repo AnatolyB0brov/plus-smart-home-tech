@@ -35,9 +35,8 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findAllByProductCategory(productCategory, pageRequest);
         if (CollectionUtils.isEmpty(products)) {
             return Collections.emptyList();
-        } else {
-            return productMapper.productsToProductDtos(products);
         }
+        return productMapper.productsToProductDtos(products);
 
     }
 
