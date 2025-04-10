@@ -19,9 +19,11 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID deliveryId;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "from_address", joinColumns = @JoinColumn(name = "delivery_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    @ManyToOne
+    @JoinColumn(name = "from_address_id", referencedColumnName = "address_id")
+    Address fromAddress;
+    @ManyToOne
+    @JoinColumn(name = "to_address_id", referencedColumnName = "address_id")
     Address toAddress;
     UUID orderId;
     @Enumerated(EnumType.STRING)

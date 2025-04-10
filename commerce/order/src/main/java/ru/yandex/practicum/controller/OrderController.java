@@ -24,7 +24,9 @@ public class OrderController {
 
     @GetMapping
     public List<OrderDto> getOrders(@RequestParam String username) {
-        if (StringUtils.isEmpty(username)) throw new NotAuthorizedUserException("Username cannot be empty");
+        if (StringUtils.isEmpty(username)) {
+            throw new NotAuthorizedUserException("Username cannot be empty");
+        }
         log.info("Get orders by username {}", username);
         return orderService.getOrders(username);
     }

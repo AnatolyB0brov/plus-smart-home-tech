@@ -10,7 +10,7 @@ import ru.yandex.practicum.mapper.DeliveryMapper;
 import ru.yandex.practicum.model.Delivery;
 import ru.yandex.practicum.order.OrderDto;
 import ru.yandex.practicum.order.feign.OrderClient;
-import ru.yandex.practicum.repositury.DeliveryRepository;
+import ru.yandex.practicum.repository.DeliveryRepository;
 import ru.yandex.practicum.warehouse.dto.AddressDto;
 import ru.yandex.practicum.warehouse.dto.ShippedToDeliveryRequest;
 import ru.yandex.practicum.warehouse.feign.WarehouseClient;

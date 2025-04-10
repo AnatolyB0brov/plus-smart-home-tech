@@ -85,9 +85,11 @@ public class PaymentServiceImpl implements PaymentService {
     private void checkOrder(OrderDto order) {
         if (order.getDeliveryPrice() == null) {
             throw new NotEnoughInfoException("Delivery price is null");
-        } else if (order.getProductPrice() == null) {
+        }
+        if (order.getProductPrice() == null) {
             throw new NotEnoughInfoException("Product price is null");
-        } else if (order.getTotalPrice() == null) {
+        }
+        if (order.getTotalPrice() == null) {
             throw new NotEnoughInfoException("Total price is null");
         }
     }
