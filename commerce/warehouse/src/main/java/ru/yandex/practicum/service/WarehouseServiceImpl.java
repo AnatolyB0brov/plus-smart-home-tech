@@ -38,14 +38,14 @@ public class WarehouseServiceImpl implements WarehouseService {
             new AddressDto[]{
                     AddressDto.builder()
                             .country("Russia")
-                            .city("Moscow")
+                            .city("ADDRESS_1")
                             .street("Liteinaya")
                             .house("3")
                             .flat("1")
                             .build(),
                     AddressDto.builder()
                             .country("Russia")
-                            .city("Moscow")
+                            .city("ADDRESS_2")
                             .street("Leningradskiy pr")
                             .house("5")
                             .flat("2")
